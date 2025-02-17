@@ -12,7 +12,7 @@ import SignIn from './pages/SignIn/SignIn'
 import SignUp from './pages/SignUp/SignUp'
 import GetStarted from './pages/GetStarted/GetStarted'
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Set initial login status
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Set initial login status
   return (
     
      <Router>
