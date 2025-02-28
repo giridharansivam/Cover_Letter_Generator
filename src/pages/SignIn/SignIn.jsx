@@ -1,44 +1,55 @@
 // src/components/SignIn.js
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Footer } from '../../containers';
+import { auth, signInWithEmailAndPassword } from '../../Firebase';  // Import Firebase methods
 
 const SignIn = ({ setIsLoggedIn }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();  // For redirect after successful sign-in
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
 
-    // Add your sign-in logic here
-    console.log('Username:', username);
-    console.log('Password:', password);
-    console.log('Remember Me:', rememberMe);
-    setIsLoggedIn(true)
+    try {
+      // Firebase sign-in logic
+      await signInWithEmailAndPassword(auth, email, password);
+      setIsLoggedIn(true); // Update logged-in state
+
+      // Redirect to home or dashboard after successful sign-in
+      navigate('/');  // Change '/dashboard' to wherever you want to redirect
+    } catch (error) {
+      setError(error.message);  // Display Firebase error
+    }
   };
 
   return (
-    <div className="container" style={{color:'white',paddingTop:'6rem'}}>
+    <div className="container" style={{ color: 'white', paddingTop: '6rem' }}>
       <div className="row justify-content-center">
         <div className="col-md-6">
-          <h2 className="mb-4"style={{textAlign:'center'}}>Sign In</h2>
+          <h2 className="mb-4" style={{ textAlign: 'center' }}>Sign In</h2>
+
+          {/* Show error message if any */}
+          {error && <div className="alert alert-danger">{error}</div>}
+
           <form onSubmit={handleSignIn}>
-            <div className="mb-3" style={{maxWidth:'50%'}}>
-              <label htmlFor="username" className="form-label">
-                Username
+            <div className="mb-3" style={{ maxWidth: '50%' }}>
+              <label htmlFor="email" className="form-label">
+                Email
               </label>
               <input
-                type="text"
+                type="email"
                 className="form-control"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
-            <div className="mb-3" style={{maxWidth:'50%'}}>
+            <div className="mb-3" style={{ maxWidth: '50%' }}>
               <label htmlFor="password" className="form-label">
                 Password
               </label>
@@ -56,17 +67,16 @@ const SignIn = ({ setIsLoggedIn }) => {
                 type="checkbox"
                 className="form-check-input"
                 id="rememberMe"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
               />
               <label className="form-check-label" htmlFor="rememberMe">
                 Remember Me
               </label>
             </div>
-            <button type="submit" className="btn btn-primary" onClick={handleSignIn}>
-              <Link to='/'>Sign In</Link>
+            <button type="submit" className="btn btn-primary">
+              Sign In
             </button>
           </form>
+
           <p className="mt-3">
             Don't have an account? <Link to="/signup">Sign Up</Link>
           </p>

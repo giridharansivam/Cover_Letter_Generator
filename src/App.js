@@ -1,18 +1,31 @@
-import React, { useState } from 'react'
-
+import React, { useState, useEffect } from 'react';
 import {  Brand,Navbar } from './components'
 import { Builder,Footer,Header } from './containers'
 import './App.css'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import PdfReader from './pages/resumeBuilder/resumeBuilder'
+import Profile from './pages/Profile/Profile';
 import CoverLetterGenerator from './pages/coverLetterGenerator/coverletterGenerator'
 import Home from './pages/Home/Home'
 import Contact from './pages/contact/Contact'
 import SignIn from './pages/SignIn/SignIn'
 import SignUp from './pages/SignUp/SignUp'
+import { auth } from './Firebase';  // Make sure to import auth from Firebase
 import GetStarted from './pages/GetStarted/GetStarted'
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Set initial login status
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Set initial login status
+  
+
+  // Check if the user is already logged in when the app starts
+  useEffect(() => {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
   return (
     
      <Router>
@@ -33,10 +46,14 @@ const App = () => {
             <Route path="/contact" element={<><Contact /><Footer /></>} />
           </Routes>
           <Routes>
-          <Route path="/SignIn" element={<><SignIn setIsLoggedIn={setIsLoggedIn} /></>} />
-          </Routes>
-          <Routes>
-            <Route path="/signUp" element={<><SignUp/></>} />
+          <Route path="/signin" element={<SignIn setIsLoggedIn={setIsLoggedIn} />} />
+        <Route path="/signup" element={<SignUp />} />
+        {/* Protect Profile route */}
+        <Route
+          path="/profile"
+          element={isLoggedIn ? <Profile /> : <SignIn setIsLoggedIn={setIsLoggedIn} />}
+        />
+        <Route path="/" element={isLoggedIn ? <Profile /> : <SignIn setIsLoggedIn={setIsLoggedIn} />} />
           </Routes>
           
           

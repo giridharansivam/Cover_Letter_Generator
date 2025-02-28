@@ -71,7 +71,7 @@ const Navbar = () => {
                   </Link>
               </li>
               <li className='list'>
-                <Link className="link" to="/signIn">
+                <Link className="link" to="/profile">
                   <span className='icon'><img src={profile}/></span>
                   <span className='text'>Profile</span>
                   </Link>
